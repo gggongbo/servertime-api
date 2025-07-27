@@ -41,10 +41,19 @@ export default defineConfig({
 
     // CommonJS 형태로 빌드
     rollupOptions: {
+      input: "src/main.ts",
       output: {
         format: "cjs",
-        entryFileNames: "index.cjs",
+        entryFileNames: "index.js",
       },
+      external: [
+        // Node.js 내장 모듈
+        /^node:.*/,
+        // NestJS 패키지들
+        /@nestjs\/.*/,
+        "rxjs",
+        "reflect-metadata",
+      ],
     },
   },
 });

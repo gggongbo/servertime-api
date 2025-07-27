@@ -2,6 +2,7 @@
 
 Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
 
+require('reflect-metadata');
 const core = require('@nestjs/core');
 const common = require('@nestjs/common');
 
