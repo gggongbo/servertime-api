@@ -2,6 +2,7 @@
 
 사용하는 프레임워크랑 언어는 nest.js + typescript를 쓰고 싶고 fetch를 이용해서 get 요청을 보내고, 보낸 html 값을 파싱해서 나오는 서버시간을 return해주는 간단한 api 서버를 만들고 싶어
 
+-> vercel 배포를 위해 express.js + js 사용으로 변경
 pnpm을 꼭 사용해야함
 
 오케이 그럼 pnpm add @nestjs/core @nestjs/common @nestjs/platform-express reflect-metadata rxjs 이거대로 설치하고 simple-requirement.txt에 있는 요구사항대로 nestjs + typescript 기반의 api 서버 만드는 것을 진행해줘
