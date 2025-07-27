@@ -1,27 +1,21 @@
 {
   "name": "servertime-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simple Express.js API for fetching server time from navyism.com",
+  "main": "api/index.js",
   "scripts": {
-    "build": "rm -rf api && tsc",
-    "start": "node api/main.js",
-    "dev": "nodemon --exec ts-node src/main.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "echo \"Express.js API will start\"",
+    "start": "node api/index.js",
+    "dev": "node api/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "express",
+    "servertime",
+    "api"
+  ],
   "packageManager": "pnpm@10.12.1",
   "dependencies": {
-    "@nestjs/common": "^11.1.5",
-    "@nestjs/core": "^11.1.5",
-    "@nestjs/platform-express": "^11.1.5",
-    "rxjs": "^7.8.2"
-  },
-  "devDependencies": {
-    "@types/node": "^24.1.0",
-    "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
   }
 }
