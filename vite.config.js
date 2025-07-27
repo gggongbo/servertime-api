@@ -37,12 +37,13 @@ export default defineConfig({
     // SSR 모드로 빌드 (Node.js용)
     ssr: true,
     target: "node18",
-    outDir: "dist",
+    outDir: "api",
 
     // CommonJS 형태로 빌드
     rollupOptions: {
       output: {
         format: "cjs",
+        entryFileNames: "index.cjs",
       },
     },
   },

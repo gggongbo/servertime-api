@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf dist && vite build",
-    "start": "node dist/main.cjs",
+    "build": "rm -rf api && vite build",
+    "start": "node api/index.cjs",
     "dev": "vite  --host",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
