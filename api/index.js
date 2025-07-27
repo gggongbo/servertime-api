@@ -1,11 +1,53 @@
 const express = require("express");
 const cors = require("cors");
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+const timezone = require("dayjs/plugin/timezone");
+
+// dayjs 플러그인 설정
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const app = express();
 
 // CORS 설정
 app.use(cors());
 app.use(express.json());
+
+// 시간을 KST로 변환하는 함수
+function convertToKST(timeString) {
+  try {
+    // 시간 문자열이 밀리초를 포함하는지 확인
+    const hasMillis = timeString.includes(".");
+
+    if (hasMillis) {
+      // 밀리초가 있는 경우 그대로 파싱
+      const parsed = dayjs(timeString);
+      if (parsed.isValid()) {
+        return (
+          parsed.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss") +
+          "." +
+          timeString.split(".")[1]
+        );
+      }
+    } else {
+      // 밀리초가 없는 경우 파싱 후 현재 밀리초 추가
+      const parsed = dayjs(timeString);
+      if (parsed.isValid()) {
+        const kstTime = parsed.tz("Asia/Seoul");
+        const currentMillis = String(
+          dayjs().tz("Asia/Seoul").millisecond()
+        ).padStart(3, "0");
+        return `${kstTime.format("YYYY-MM-DD HH:mm:ss")}.${currentMillis}`;
+      }
+    }
+
+    // 파싱 실패시 null 반환
+    return null;
+  } catch (error) {
+    return null;
+  }
+}
 
 // 서버 타임 추출 함수
 function extractServerTime(htmlContent) {
@@ -14,7 +56,8 @@ function extractServerTime(htmlContent) {
   const timeWithMillisMatch = htmlContent.match(timeWithMillisRegex);
 
   if (timeWithMillisMatch) {
-    return timeWithMillisMatch[1];
+    const kstTime = convertToKST(timeWithMillisMatch[1]);
+    if (kstTime) return kstTime;
   }
 
   // 방법 2: 기존 전체 날짜/시간 형식 찾기 (밀리초 없음)
@@ -22,7 +65,8 @@ function extractServerTime(htmlContent) {
   const timeMatch = htmlContent.match(timeRegex);
 
   if (timeMatch) {
-    return timeMatch[1];
+    const kstTime = convertToKST(timeMatch[1]);
+    if (kstTime) return kstTime;
   }
 
   // 방법 3: 밀리초가 포함된 시간만 찾기
@@ -30,8 +74,10 @@ function extractServerTime(htmlContent) {
   const timeOnlyWithMillisMatch = htmlContent.match(timeOnlyWithMillisRegex);
 
   if (timeOnlyWithMillisMatch) {
-    const today = new Date().toISOString().split("T")[0];
-    return `${today} ${timeOnlyWithMillisMatch[1]}`;
+    const today = dayjs().tz("Asia/Seoul").format("YYYY-MM-DD");
+    const timeString = `${today} ${timeOnlyWithMillisMatch[1]}`;
+    const kstTime = convertToKST(timeString);
+    if (kstTime) return kstTime;
   }
 
   // 방법 4: 시간만 찾기 (밀리초 없음)
@@ -39,21 +85,17 @@ function extractServerTime(htmlContent) {
   const timeMatch2 = htmlContent.match(timeRegex2);
 
   if (timeMatch2) {
-    const today = new Date().toISOString().split("T")[0];
-    return `${today} ${timeMatch2[1]}`;
+    const today = dayjs().tz("Asia/Seoul").format("YYYY-MM-DD");
+    const timeString = `${today} ${timeMatch2[1]}`;
+    const kstTime = convertToKST(timeString);
+    if (kstTime) return kstTime;
   }
 
-  // 방법 5: 현재 시스템 시간 반환 (fallback) - 밀리초 포함
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const seconds = String(now.getSeconds()).padStart(2, "0");
-  const milliseconds = String(now.getMilliseconds()).padStart(3, "0");
+  // 방법 5: 현재 한국 시간 반환 (fallback) - 밀리초 포함
+  const nowKST = dayjs().tz("Asia/Seoul");
+  const milliseconds = String(nowKST.millisecond()).padStart(3, "0");
 
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+  return `${nowKST.format("YYYY-MM-DD HH:mm:ss")}.${milliseconds}`;
 }
 
 // 서버 타임 가져오기 함수
@@ -72,14 +114,14 @@ async function getServerTime(targetUrl) {
     return {
       serverTime,
       targetHost: targetUrl,
-      timestamp: Date.now(),
+      timestamp: dayjs().tz("Asia/Seoul").valueOf(),
       success: true,
     };
   } catch (error) {
     return {
       serverTime: "",
       targetHost: targetUrl,
-      timestamp: Date.now(),
+      timestamp: dayjs().tz("Asia/Seoul").valueOf(),
       success: false,
       error: `Failed to fetch server time: ${error.message}`,
     };
@@ -90,7 +132,8 @@ async function getServerTime(targetUrl) {
 app.get("/", (req, res) => {
   res.json({
     message: "Time Macro API Server is running!",
-    timestamp: Date.now(),
+    timestamp: dayjs().tz("Asia/Seoul").valueOf(),
+    currentTime: dayjs().tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss.SSS"),
   });
 });
 
