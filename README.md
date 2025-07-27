@@ -1,6 +1,6 @@
 # 🕐 ServerTime API
 
-NestJS + TypeScript + Vite로 구성된 서버시간 조회 API
+Express.js + JavaScript로 구성된 서버시간 조회 API
 
 특정 사이트의 서버시간을 밀리초 단위까지 정확하게 조회할 수 있는 REST API입니다.
 
@@ -8,15 +8,8 @@ NestJS + TypeScript + Vite로 구성된 서버시간 조회 API
 
 ```
 servertime-api/
-├── src/
-│   ├── main.ts           # 애플리케이션 진입점
-│   ├── app.module.ts     # NestJS 루트 모듈
-│   ├── app.controller.ts # API 컨트롤러
-│   ├── app.service.ts    # 비즈니스 로직
-│   └── interfaces.ts     # TypeScript 인터페이스
-├── dist/                 # 빌드 결과물
-├── vite.config.js        # Vite 설정
-├── tsconfig.json         # TypeScript 설정
+├── api/
+│   └── index.js          # Express.js 애플리케이션 (모든 로직 포함)
 ├── vercel.json          # Vercel 배포 설정
 └── package.json
 ```
@@ -42,13 +35,9 @@ pnpm dev
 
 서버가 `http://localhost:3000`에서 실행됩니다.
 
-### 3. 프로덕션 빌드
+### 3. 프로덕션 서버 실행
 
 ```bash
-# 빌드
-pnpm build
-
-# 프로덕션 서버 실행
 pnpm start
 ```
 
@@ -106,7 +95,8 @@ GET /
 ```json
 {
   "message": "Time Macro API Server is running!",
-  "timestamp": 1737370245123
+  "timestamp": 1737370245123,
+  "currentTime": "2025-01-20 14:30:45.123"
 }
 ```
 
@@ -151,9 +141,8 @@ else:
 
 ## ⚙️ 기술 스택
 
-- **Backend:** NestJS, TypeScript
-- **Build Tool:** Vite + vite-plugin-node
-- **Compiler:** SWC (데코레이터 메타데이터 지원)
+- **Backend:** Express.js, JavaScript
+- **Time Handling:** dayjs (KST 시간대 지원)
 - **Package Manager:** pnpm
 - **Deployment:** Vercel
 
@@ -177,19 +166,19 @@ vercel --prod
 
 ## 📝 스크립트
 
-- `pnpm dev` - 개발 서버 실행 (HMR 지원)
-- `pnpm build` - 프로덕션 빌드
+- `pnpm dev` - 개발 서버 실행
 - `pnpm start` - 프로덕션 서버 실행
-- `pnpm start:dev` - nodemon으로 개발 서버 실행
+- `pnpm build` - 빌드 확인용 (실제로는 echo만 실행)
 
 ## 🔧 특징
 
 - **밀리초 정확도**: 서버시간을 밀리초 단위까지 정확하게 조회
-- **Hot Module Replacement**: Vite를 활용한 빠른 개발 경험
-- **TypeScript**: 타입 안전성 보장
+- **KST 시간대**: 한국 표준시(KST) 기준으로 시간 처리
+- **단일 파일**: 모든 로직이 `api/index.js` 하나의 파일에 포함
 - **CORS 지원**: 클라이언트에서 직접 호출 가능
 - **에러 핸들링**: 친화적인 에러 메시지 제공
+- **Vercel 최적화**: 서버리스 함수로 배포 가능
 
-## 📄 라이선스
+## �� 라이선스
 
 MIT License
