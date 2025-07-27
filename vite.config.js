@@ -35,24 +35,29 @@ export default defineConfig({
   // 빌드 설정
   build: {
     // SSR 모드로 빌드 (Node.js용)
-    ssr: true,
+    ssr: "src/main.ts",
     target: "node18",
     outDir: "api",
 
-    // CommonJS 형태로 빌드
+    // ES Module 완전 호환 설정
     rollupOptions: {
       input: "src/main.ts",
       output: {
-        format: "cjs",
+        format: "es",
         entryFileNames: "index.js",
+        // CommonJS interop 완전 비활성화
+        interop: false,
+        esModule: false,
+        exports: "named",
       },
       external: [
-        // Node.js 내장 모듈
+        // 모든 의존성을 external로 처리
         /^node:.*/,
-        // NestJS 패키지들
-        /@nestjs\/.*/,
+        /^@nestjs\/.*/,
         "rxjs",
         "reflect-metadata",
+        "express",
+        "cors",
       ],
     },
   },
