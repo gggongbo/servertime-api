@@ -16,7 +16,7 @@ export class AppController {
       return {
         success: false,
         error: "URL parameter is required",
-        example: "/server-time?url=www.kbanknow.com",
+        example: "/server-time?url=www.naver.com",
       };
     }
 

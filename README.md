@@ -1,105 +1,81 @@
-# Time Macro API Server
+# 🕐 ServerTime API
 
-navyism.com에서 서버시간을 크롤링하여 JSON API로 제공하는 간단한 NestJS 서버입니다.
+NestJS + TypeScript + Vite로 구성된 서버시간 조회 API
 
-## 🚀 Quick Start
+특정 사이트의 서버시간을 밀리초 단위까지 정확하게 조회할 수 있는 REST API입니다.
 
-### 설치
-
-```bash
-# 패키지 설치
-pnpm install
-
-# 개발 서버 실행
-pnpm run start:dev
-```
-
-### API 사용법
-
-```bash
-# 케이뱅크 서버시간 조회
-curl "http://localhost:3000/server-time?url=www.kbanknow.com"
-
-# 응답 예시
-{
-  "serverTime": "2025-01-27 14:30:45.123",
-  "targetHost": "www.kbanknow.com",
-  "timestamp": 1706348445123,
-  "success": true
-}
-```
-
-## 📋 요구사항
-
-- Node.js 18+
-- pnpm (패키지 매니저)
-
-## 🛠 기술 스택
-
-- **Framework**: NestJS
-- **Language**: TypeScript
-- **Package Manager**: pnpm
-- **HTTP Client**: fetch API
-
-## 📂 프로젝트 구조
+## 📁 프로젝트 구조
 
 ```
 servertime-api/
 ├── src/
-│   ├── app.controller.ts    # API 엔드포인트
-│   ├── app.service.ts       # 크롤링 비즈니스 로직
-│   ├── app.module.ts        # NestJS 모듈 설정
-│   └── main.ts              # 서버 진입점
-├── package.json
-├── tsconfig.json
-├── PRD.korean.md           # 제품 요구사항 문서
-└── README.md               # 프로젝트 가이드
+│   ├── main.ts           # 애플리케이션 진입점
+│   ├── app.module.ts     # NestJS 루트 모듈
+│   ├── app.controller.ts # API 컨트롤러
+│   ├── app.service.ts    # 비즈니스 로직
+│   └── interfaces.ts     # TypeScript 인터페이스
+├── dist/                 # 빌드 결과물
+├── vite.config.js        # Vite 설정
+├── tsconfig.json         # TypeScript 설정
+├── vercel.json          # Vercel 배포 설정
+└── package.json
 ```
 
-## 🔄 작동 원리
+## 🚀 빠른 시작
 
-1. `GET /server-time?url={target_url}` 요청 수신
-2. `https://time.navyism.com/?host=${target_url}` 로 매핑
-3. navyism.com에서 HTML 응답 수신
-4. HTML 파싱하여 서버시간 추출
-5. JSON 형태로 클라이언트에 응답
+### 1. 설치
 
-## 📝 개발 진행 상황
+```bash
+# 저장소 클론
+git clone <repository-url>
+cd servertime-api
 
-### ✅ 완료된 작업
+# 의존성 설치
+pnpm install
+```
 
-- [x] 프로젝트 초기 설정
-- [x] PRD 문서 작성
-- [x] README 문서 작성
+### 2. 개발 서버 실행
 
-### 🔄 진행 중인 작업
+```bash
+pnpm dev
+```
 
-- [ ] NestJS 패키지 설치
-- [ ] 기본 프로젝트 구조 생성
-- [ ] navyism.com 크롤링 로직 구현
+서버가 `http://localhost:3000`에서 실행됩니다.
 
-### 📅 다음 할 일
+### 3. 프로덕션 빌드
 
-- [ ] HTML 파싱 로직 구현
-- [ ] API 엔드포인트 완성
-- [ ] 테스트 및 검증
+```bash
+# 빌드
+pnpm build
 
-## 🎯 API 스펙
+# 프로덕션 서버 실행
+pnpm start
+```
 
-### GET /server-time
+## 📖 API 사용법
+
+### 서버시간 조회
+
+특정 사이트의 서버시간을 조회합니다.
+
+**요청:**
+
+```http
+GET /server-time?url={target_site}
+```
 
 **파라미터:**
 
-- `url` (required): 대상 호스트 URL
+- `url` (required): 조회할 사이트 URL (예: `www.naver.com`)
 
-**응답 형식:**
+**응답 예시:**
 
-```typescript
-interface ServerTimeResponse {
-  serverTime: string; // 서버시간 (YYYY-MM-DD HH:mm:ss.SSS)
-  targetHost: string; // 요청한 호스트
-  timestamp: number; // Unix 타임스탬프
-  success: boolean; // 성공 여부
+```json
+{
+  "serverTime": "2025-01-20 14:30:45.123",
+  "targetHost": "www.naver.com",
+  "timestamp": 1737370245123,
+  "success": true
 }
 ```
 
@@ -107,23 +83,113 @@ interface ServerTimeResponse {
 
 ```json
 {
+  "serverTime": "",
+  "targetHost": "invalid-site.com",
+  "timestamp": 1737370245123,
   "success": false,
-  "error": "Failed to fetch server time",
-  "targetHost": "invalid.com"
+  "error": "Failed to fetch server time: ..."
 }
 ```
 
-## 🤝 기여
+### 헬스체크
 
-이 프로젝트는 간단한 API 서버이므로 복잡한 기능은 추가하지 않습니다.
+서버 상태를 확인합니다.
 
-### 제외된 기능
+**요청:**
 
-- Guard, Interceptor 등 보안 기능
-- 데이터베이스 연동
-- 복잡한 인증/인가 시스템
-- 캐싱 및 로깅 시스템
+```http
+GET /
+```
 
-## 📄 라이센스
+**응답:**
+
+```json
+{
+  "message": "Time Macro API Server is running!",
+  "timestamp": 1737370245123
+}
+```
+
+## 💡 사용 예시
+
+### cURL
+
+```bash
+# 네이버 서버시간 조회
+curl "http://localhost:3000/server-time?url=www.naver.com"
+```
+
+### JavaScript (fetch)
+
+```javascript
+const response = await fetch(
+  "http://localhost:3000/server-time?url=www.naver.com"
+);
+const data = await response.json();
+
+if (data.success) {
+  console.log("서버시간:", data.serverTime);
+} else {
+  console.error("에러:", data.error);
+}
+```
+
+### Python (requests)
+
+```python
+import requests
+
+response = requests.get('http://localhost:3000/server-time',
+                       params={'url': 'www.naver.com'})
+data = response.json()
+
+if data['success']:
+    print(f"서버시간: {data['serverTime']}")
+else:
+    print(f"에러: {data['error']}")
+```
+
+## ⚙️ 기술 스택
+
+- **Backend:** NestJS, TypeScript
+- **Build Tool:** Vite + vite-plugin-node
+- **Compiler:** SWC (데코레이터 메타데이터 지원)
+- **Package Manager:** pnpm
+- **Deployment:** Vercel
+
+## 🌐 배포
+
+### Vercel에 배포
+
+1. Vercel CLI 설치:
+
+```bash
+npm i -g vercel
+```
+
+2. 배포:
+
+```bash
+vercel --prod
+```
+
+또는 GitHub 연동으로 자동 배포 가능합니다.
+
+## 📝 스크립트
+
+- `pnpm dev` - 개발 서버 실행 (HMR 지원)
+- `pnpm build` - 프로덕션 빌드
+- `pnpm start` - 프로덕션 서버 실행
+- `pnpm start:dev` - nodemon으로 개발 서버 실행
+
+## 🔧 특징
+
+- **밀리초 정확도**: 서버시간을 밀리초 단위까지 정확하게 조회
+- **Hot Module Replacement**: Vite를 활용한 빠른 개발 경험
+- **TypeScript**: 타입 안전성 보장
+- **CORS 지원**: 클라이언트에서 직접 호출 가능
+- **에러 핸들링**: 친화적인 에러 메시지 제공
+
+## 📄 라이선스
 
 MIT License

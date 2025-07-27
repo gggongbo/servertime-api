@@ -21,12 +21,12 @@
 GET /server-time?url={target_url}
 
 요청 예시:
-GET /server-time?url=www.kbanknow.com
+GET /server-time?url=www.naver.com
 
 응답 예시:
 {
   "serverTime": "2025-01-27 14:30:45.123",
-  "targetHost": "www.kbanknow.com",
+  "targetHost": "www.naver.com",
   "timestamp": 1706348445123,
   "success": true
 }
