@@ -7,8 +7,14 @@ async function bootstrap() {
   // CORS 설정 (클라이언트에서 접근 가능하도록)
   app.enableCors();
 
-  await app.listen(3000);
-  console.log("🚀 Time Macro API Server is running on http://localhost:3000");
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+  console.log(
+    `🚀 Time Macro API Server is running on http://localhost:${port}`
+  );
+
+  return app;
 }
 
-bootstrap();
+// Vite 개발 서버용 export (vite-plugin-node가 이걸 사용함)
+export const viteNodeApp = bootstrap();
