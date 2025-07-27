@@ -2,10 +2,11 @@
   "name": "servertime-api",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "build": "rm -rf dist && vite build",
-    "start": "node dist/main.js",
+    "start": "node dist/main.cjs",
     "dev": "vite  --host",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
