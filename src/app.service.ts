@@ -35,7 +35,16 @@ export class AppService {
   private extractServerTime(htmlContent: string): string {
     // 여러 방법으로 시간 추출 시도
 
-    // 방법 1: JavaScript에서 현재 시간 표시하는 요소 찾기
+    // 방법 1: 밀리초가 포함된 전체 날짜/시간 형식 찾기
+    const timeWithMillisRegex =
+      /(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\.\d{3})/;
+    const timeWithMillisMatch = htmlContent.match(timeWithMillisRegex);
+
+    if (timeWithMillisMatch) {
+      return timeWithMillisMatch[1];
+    }
+
+    // 방법 2: 기존 전체 날짜/시간 형식 찾기 (밀리초 없음)
     const timeRegex = /(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})/;
     const timeMatch = htmlContent.match(timeRegex);
 
@@ -43,7 +52,16 @@ export class AppService {
       return timeMatch[1];
     }
 
-    // 방법 2: 다른 시간 포맷 찾기
+    // 방법 3: 밀리초가 포함된 시간만 찾기
+    const timeOnlyWithMillisRegex = /(\d{2}:\d{2}:\d{2}\.\d{3})/;
+    const timeOnlyWithMillisMatch = htmlContent.match(timeOnlyWithMillisRegex);
+
+    if (timeOnlyWithMillisMatch) {
+      const today = new Date().toISOString().split("T")[0];
+      return `${today} ${timeOnlyWithMillisMatch[1]}`;
+    }
+
+    // 방법 4: 시간만 찾기 (밀리초 없음)
     const timeRegex2 = /(\d{2}:\d{2}:\d{2})/;
     const timeMatch2 = htmlContent.match(timeRegex2);
 
@@ -52,8 +70,17 @@ export class AppService {
       return `${today} ${timeMatch2[1]}`;
     }
 
-    // 방법 3: 현재 시스템 시간 반환 (fallback)
-    return new Date().toLocaleString("sv-SE"); // YYYY-MM-DD HH:mm:ss 형식
+    // 방법 5: 현재 시스템 시간 반환 (fallback) - 밀리초 포함
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    const milliseconds = String(now.getMilliseconds()).padStart(3, "0");
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
   }
 
   getHealth(): { message: string; timestamp: number } {
