@@ -87,14 +87,14 @@ async function getServerTime(targetUrl) {
 }
 
 // 라우트 정의
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.json({
     message: "Time Macro API Server is running!",
     timestamp: Date.now(),
   });
 });
 
-app.get("/server-time", async (req, res) => {
+app.get("/api/server-time", async (req, res) => {
   const url = req.query.url;
 
   if (!url) {
